@@ -1,3 +1,5 @@
+<img width="250" height="250" alt="nvidia-certified-professional-openusd-development" src="https://github.com/user-attachments/assets/d18bd947-bc86-43f1-987e-afe4689666fc" />
+
 # OpenUSD Study Notes
 
 **A Study Companion for the NCP-OpenUSD Certification Preparation**
