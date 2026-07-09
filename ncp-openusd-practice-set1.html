@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NCP OpenUSD Practice Exam — Set 1</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700;800&family=Inter:wght@400;500&display=swap');
+
+  :root {
+    --green: #76b900;
+    --green-dim: #4a7500;
+    --green-glow: rgba(118,185,0,0.15);
+    --bg: #0c0e0a;
+    --surface: #121510;
+    --surface2: #1a1e15;
+    --border: #2a3020;
+    --text: #d8e0cc;
+    --text-dim: #7a8a6a;
+    --correct: #4caf50;
+    --incorrect: #f44336;
+    --selected: #1e2d10;
+    --mono: 'JetBrains Mono', monospace;
+    --head: 'Syne', sans-serif;
+    --body: 'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: var(--green);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-family: var(--head);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+
+  .logo-sub {
+    font-family: var(--head);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .score-bar {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-val {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--green);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 2px;
+  }
+
+  .progress-ring-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .progress-ring {
+    transform: rotate(-90deg);
+  }
+
+  /* ── CONTROLS ── */
+  .controls {
+    padding: 16px 32px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  button {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  button:hover { border-color: var(--green); color: var(--green); }
+  button.primary { background: var(--green); color: #000; border-color: var(--green); font-weight: 700; }
+  button.primary:hover { background: #8fd100; }
+
+  .filter-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    padding: 12px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  .filter-tab {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .filter-tab:hover, .filter-tab.active {
+    border-color: var(--green);
+    color: var(--green);
+    background: var(--green-glow);
+  }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  .section-header {
+    font-family: var(--head);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin: 32px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── QUESTION CARD ── */
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .question-card:target, .question-card.highlighted {
+    border-color: var(--green);
+  }
+
+  .question-card[data-answered="correct"] { border-left: 3px solid var(--correct); }
+  .question-card[data-answered="incorrect"] { border-left: 3px solid var(--incorrect); }
+  .question-card[data-answered="flagged"] { border-left: 3px solid #ff9800; }
+
+  .q-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px 20px 14px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .q-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-dim);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .q-meta {
+    flex: 1;
+  }
+
+  .q-domain {
+    font-size: 10px;
+    font-family: var(--mono);
+    color: var(--green);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .q-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .q-expand-icon {
+    color: var(--text-dim);
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+    margin-top: 2px;
+  }
+
+  .q-body { display: none; padding: 0 20px 20px; }
+  .q-body.open { display: block; }
+  .q-expand-icon.open { transform: rotate(180deg); }
+
+  .multi-note {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: #ff9800;
+    margin-bottom: 12px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── OPTIONS ── */
+  .options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    background: var(--surface2);
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .option:hover { border-color: var(--green); background: var(--selected); }
+
+  .option.selected { border-color: var(--green); background: var(--selected); }
+
+  .option.correct { border-color: var(--correct); background: rgba(76,175,80,0.08); }
+  .option.incorrect { border-color: var(--incorrect); background: rgba(244,67,54,0.08); }
+  .option.reveal-correct { border-color: var(--correct); background: rgba(76,175,80,0.06); }
+
+  .opt-key {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--border);
+    color: var(--text-dim);
+    padding: 2px 7px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .option.correct .opt-key { background: var(--correct); color: #000; }
+  .option.incorrect .opt-key { background: var(--incorrect); color: #fff; }
+  .option.reveal-correct .opt-key { background: var(--correct); color: #000; }
+
+  .opt-text { font-size: 14px; line-height: 1.4; }
+
+  .q-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .q-actions button { font-size: 11px; padding: 6px 12px; }
+
+  .explanation {
+    display: none;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--green);
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--text);
+    margin-top: 10px;
+  }
+
+  .explanation.visible { display: block; }
+
+  .explanation strong { color: var(--green); }
+
+  .code-snippet {
+    font-family: var(--mono);
+    font-size: 12px;
+    background: #0a0c08;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px 14px;
+    margin: 8px 0;
+    white-space: pre;
+    overflow-x: auto;
+    color: #a8c070;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .overall-progress {
+    padding: 10px 32px;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 2px;
+    transition: width 0.3s;
+    width: 0%;
+  }
+
+  .progress-label { font-family: var(--mono); font-size: 11px; color: var(--text-dim); white-space: nowrap; }
+
+  /* ── RESULTS PANEL ── */
+  #results-panel {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    padding: 32px;
+    margin-bottom: 32px;
+    text-align: center;
+  }
+
+  #results-panel.visible { display: block; }
+
+  .results-score {
+    font-family: var(--head);
+    font-size: 64px;
+    font-weight: 800;
+    color: var(--green);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .results-label { font-size: 14px; color: var(--text-dim); margin-bottom: 20px; }
+
+  .results-breakdown {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .breakdown-item { text-align: center; }
+  .breakdown-val { font-family: var(--mono); font-size: 28px; font-weight: 600; }
+  .breakdown-val.green { color: var(--correct); }
+  .breakdown-val.red { color: var(--incorrect); }
+  .breakdown-val.gray { color: var(--text-dim); }
+  .breakdown-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+
+  .domain-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin: 20px 0;
+    text-align: left;
+  }
+
+  .domain-row {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px;
+  }
+
+  .domain-name { font-size: 11px; color: var(--green); font-family: var(--mono); letter-spacing: 0.06em; margin-bottom: 6px; text-transform: uppercase; }
+  .domain-score { font-size: 20px; font-weight: 700; font-family: var(--head); }
+
+  /* ── FLAG ── */
+  .flag-btn { background: transparent; border: 1px solid #ff980040; color: #ff9800; }
+  .flag-btn:hover, .flag-btn.flagged { border-color: #ff9800; background: rgba(255,152,0,0.1); color: #ff9800; }
+
+  /* Scroll to top */
+  #top-btn {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--green);
+    color: #000;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(118,185,0,0.3);
+    transition: opacity 0.2s;
+    text-transform: none;
+    letter-spacing: 0;
+    padding: 0;
+    font-family: sans-serif;
+  }
+
+  #top-btn:hover { background: #8fd100; color: #000; }
+
+  @media (max-width: 600px) {
+    header, .controls, .filter-tabs, .overall-progress { padding-left: 16px; padding-right: 16px; }
+    main { padding: 20px 12px 60px; }
+    .results-score { font-size: 48px; }
+  }
+
+  .author-block{text-align:right;line-height:1.4;}
+  .author-name{font-family:var(--head);font-size:13px;font-weight:700;color:var(--green);letter-spacing:0.02em;}
+  .author-cred{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:0.04em;text-transform:uppercase;margin-top:2px;}
+  .author-link{font-family:var(--mono);font-size:10px;color:var(--green-dim);text-decoration:none;letter-spacing:0.04em;}
+  .author-link:hover{color:var(--green);text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark"></div>
+    <div>
+      <div class="logo-text">NCP: OpenUSD Development</div>
+      <div class="logo-sub">Practice Exam · Set 1 of 3 · 70 Questions</div>
+    </div>
+  </div>
+  <div class="author-block">
+    <div class="author-name">Hashim Shaik, Ph.D.</div>
+    <div class="author-cred">NVIDIA Certified Professional | OpenUSD Development</div>
+    <a class="author-link" href="https://www.linkedin.com/in/hashimshaik/" target="_blank">linkedin.com/in/hashimshaik</a>
+  </div>
+  <div class="score-bar">
+    <div class="stat"><div class="stat-val" id="hdr-answered">0</div><div class="stat-label">Answered</div></div>
+    <div class="stat"><div class="stat-val" id="hdr-correct" style="color:#4caf50">0</div><div class="stat-label">Correct</div></div>
+    <div class="stat"><div class="stat-val" id="hdr-incorrect" style="color:#f44336">0</div><div class="stat-label">Incorrect</div></div>
+    <div class="stat"><div class="stat-val" id="hdr-flagged" style="color:#ff9800">0</div><div class="stat-label">Flagged</div></div>
+  </div>
+</header>
+
+<div class="overall-progress">
+  <span class="progress-label" id="prog-label">0 / 70</span>
+  <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+  <span class="progress-label" id="prog-pct">0%</span>
+</div>
+
+<div class="controls">
+  <button class="primary" onclick="submitAll()">Submit All &amp; Score</button>
+  <button onclick="revealAll()">Reveal All Answers</button>
+  <button onclick="resetExam()">Reset Exam</button>
+  <button onclick="window.print()">Print / Save PDF</button>
+  <button onclick="scrollToFirstUnanswered()">Next Unanswered ↓</button>
+</div>
+
+<div class="filter-tabs">
+  <button class="filter-tab active" onclick="filterDomain('all',this)">All (70)</button>
+  <button class="filter-tab" onclick="filterDomain('Composition',this)">Composition (16)</button>
+  <button class="filter-tab" onclick="filterDomain('Content Aggregation',this)">Content Aggregation (7)</button>
+  <button class="filter-tab" onclick="filterDomain('Customizing USD',this)">Customizing USD (4)</button>
+  <button class="filter-tab" onclick="filterDomain('Data Exchange',this)">Data Exchange (11)</button>
+  <button class="filter-tab" onclick="filterDomain('Data Modeling',this)">Data Modeling (9)</button>
+  <button class="filter-tab" onclick="filterDomain('Debugging',this)">Debugging (8)</button>
+  <button class="filter-tab" onclick="filterDomain('Pipeline Development',this)">Pipeline Dev (10)</button>
+  <button class="filter-tab" onclick="filterDomain('Visualization',this)">Visualization (5)</button>
+</div>
+
+<main>
+  <div id="results-panel">
+    <div class="results-score" id="res-pct">—</div>
+    <div class="results-label">Overall Score</div>
+    <div class="results-breakdown">
+      <div class="breakdown-item"><div class="breakdown-val green" id="res-correct">0</div><div class="breakdown-label">Correct</div></div>
+      <div class="breakdown-item"><div class="breakdown-val red" id="res-incorrect">0</div><div class="breakdown-label">Incorrect</div></div>
+      <div class="breakdown-item"><div class="breakdown-val gray" id="res-skipped">0</div><div class="breakdown-label">Skipped</div></div>
+    </div>
+    <div class="domain-breakdown" id="domain-breakdown"></div>
+    <button class="primary" onclick="resetExam()">Retake Exam</button>
+  </div>
+
+  <div id="quiz-container"></div>
+</main>
+
+<button id="top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// QUESTION BANK — 70 Questions
+// ═══════════════════════════════════════════════════════
+const questions = [
+
+// ── COMPOSITION (16) ────────────────────────────────
+{
+  id: 1, domain: "Composition",
+  text: "In USD, the acronym LIVERPS describes the strength ordering of composition arcs. Which of the following correctly represents the order from strongest to weakest?",
+  multi: false,
+  options: [
+    "Local opinions → Inherits → Variants → References → Payloads → Specializes",
+    "Local opinions → Inherits → Variants → References → Specializes → Payloads",
+    "Variants → Local opinions → Inherits → References → Payloads → Specializes",
+    "Inherits → Local opinions → Variants → Specializes → References → Payloads"
+  ],
+  answer: [0],
+  explanation: "LIVERPS stands for: <strong>L</strong>ocal opinions, <strong>I</strong>nherits, <strong>V</strong>ariants, <strong>E</strong>xternally-referenced (References), <strong>P</strong>ayloads, <strong>S</strong>pecializes — from strongest to weakest. Payloads come after References and before Specializes."
+},
+{
+  id: 2, domain: "Composition",
+  text: "A shot layer references a character asset using `prepend references`. An animator then directly authors a translate value on the referenced prim inside the shot layer. According to LIVERPS, which opinion wins?",
+  multi: false,
+  options: [
+    "The translate value inside the reference, because it was authored first",
+    "The translate value in the shot layer, because local opinions are stronger than references",
+    "Neither—USD does not allow local overrides on referenced prims",
+    "The reference wins because `prepend` gives it higher priority than local opinions"
+  ],
+  answer: [1],
+  explanation: "<strong>Local opinions (L)</strong> are the strongest arc in LIVERPS, sitting above inherits, variants, references, payloads, and specializes. A value authored directly in the shot layer on a referenced prim will always override any opinion from the reference itself."
+},
+{
+  id: 3, domain: "Composition",
+  text: "A pipeline team wants multiple artists to work simultaneously on the same character asset—one on geometry, one on materials, and one on rigging—without overwriting each other. Which composition mechanism is best suited for this?",
+  multi: false,
+  options: [
+    "Variant sets, with each artist in a different variant",
+    "Sublayers within the asset, with each workstream in a separate layer",
+    "Separate references from a shared parent stage file",
+    "Payloads, with each workstream deferred until needed"
+  ],
+  answer: [1],
+  explanation: "<strong>Sublayers</strong> allow multiple layers to be stacked within the same stage or asset. Each artist can work in their own sublayer (geometry.usda, materials.usda, rig.usda) and opinions are composed top-to-bottom. This is the standard pattern for modeling multi-user collaborative workstreams within a single asset."
+},
+{
+  id: 4, domain: "Composition",
+  text: "When referencing a USD layer that contains multiple root prims, USD needs to know which prim to use as the target. What is the correct way to specify this?",
+  multi: false,
+  options: [
+    "Set the `rootPrim` metadata on the referencing prim",
+    "Add a `primPath` argument to the reference arc",
+    "Set the `defaultPrim` metadata in the referenced layer's file header",
+    "Rename all prims to match the referencing prim's name"
+  ],
+  answer: [2],
+  explanation: "<strong>defaultPrim</strong> metadata, set in the layer's header (e.g., `defaultPrim = \"Robot\"`), tells USD which root prim to use when the layer is referenced without an explicit prim path. If omitted, the reference must supply an explicit prim path—otherwise composition will fail."
+},
+{
+  id: 5, domain: "Composition",
+  text: "You author a variant set `surfacing` on a prop asset with options `wet` and `dry`. An FX artist wants to override just the wet variant's emissive value in a downstream shot. Which specifier should they use when targeting the relevant prim inside the variant?",
+  multi: false,
+  options: [
+    "`def` — to redefine the prim completely in the shot layer",
+    "`class` — because class prims propagate across the whole stage",
+    "`over` — to add non-destructive opinions on top of the existing definition",
+    "`payload` — to load the override only when needed"
+  ],
+  answer: [2],
+  explanation: "<strong>`over`</strong> is a specifier that authors opinions on a prim without requiring it to exist in the current layer. It is the correct way to non-destructively add or change attributes on existing prims (including those inside variants) from a downstream or shot layer."
+},
+{
+  id: 6, domain: "Composition",
+  text: "A technical director sets `prepend references` on a prim that already has `append references`. What is the practical effect of using `prepend` instead of `append`?",
+  multi: false,
+  options: [
+    "Prepended references are loaded before appended ones and have higher opinion strength",
+    "Prepended references are ignored if any appended reference exists",
+    "Prepend makes the reference load on demand, while append loads it eagerly",
+    "Append and prepend are functionally identical for references"
+  ],
+  answer: [0],
+  explanation: "List editing keywords like <strong>prepend</strong> and <strong>append</strong> control the order of items in lists. A prepended reference appears earlier in the reference list, meaning it has stronger opinions than an appended reference on the same prim. This matters when multiple references contribute opinions to the same attribute."
+},
+{
+  id: 7, domain: "Composition",
+  text: "An asset uses a payload arc to load its geometry. A downstream pipeline stage wants to process metadata about the asset (bounding box, kind, purpose) without loading the full geometry. What is the correct behavior?",
+  multi: false,
+  options: [
+    "Payloads must always be loaded before any metadata is accessible",
+    "Metadata and properties outside the payload are accessible even when the payload is unloaded",
+    "The prim disappears entirely from the stage when its payload is unloaded",
+    "Payloads can never be unloaded once a stage is opened"
+  ],
+  answer: [1],
+  explanation: "<strong>Payloads</strong> are specifically designed for deferred loading of heavy data. Prim identity, metadata (kind, purpose, extentsHint), and properties defined <em>outside</em> the payload arc remain accessible on an unloaded prim. This is the core advantage over references—payloads let pipelines manage working sets efficiently."
+},
+{
+  id: 8, domain: "Composition",
+  text: "A prop has a variant set `lod` with values `high`, `mid`, and `low`. A set-dressing stage selects `mid`, but a shot layer wants to override this to `low` for performance. Where should the variant selection for the shot be authored?",
+  multi: false,
+  options: [
+    "Inside the prop's own USD file, replacing the default selection",
+    "In the set-dressing layer using a `prepend sublayers` to the shot",
+    "Directly on the referencing prim in the shot layer using the `variants` metadata",
+    "In a separate payload layer that references the prop"
+  ],
+  answer: [2],
+  explanation: "Variant selections are authored as <strong>metadata on the referencing prim</strong> (`variants = { string lod = \"low\" }`). A stronger layer (e.g., the shot layer) can override a weaker layer's variant selection because variant selection opinions follow LIVERPS strength ordering."
+},
+{
+  id: 9, domain: "Composition",
+  text: "Two USD layers—base.usda and override.usda—both define `color3f[] primvars:displayColor` on `/World/Cube`. The stage's root layer sublayers override.usda on top of base.usda. Which value appears on the composed stage?",
+  multi: false,
+  options: [
+    "The value from base.usda, because it was authored first",
+    "Both values are merged into an array",
+    "The value from override.usda, because it is in a stronger (higher) sublayer",
+    "USD raises a composition error and uses a fallback default"
+  ],
+  answer: [2],
+  explanation: "In a sublayer stack, layers listed <strong>earlier (higher)</strong> have stronger opinions. The root layer is strongest, and sublayers are ordered by their position in the `subLayers` list—earlier entries override later ones. `override.usda` being on top means its value wins for `primvars:displayColor`."
+},
+{
+  id: 10, domain: "Composition",
+  text: "An asset producer wants to share a character with an external vendor, but the character's USD file contains internal pipeline paths in its references. Which operation is most appropriate to prepare it for external delivery?",
+  multi: false,
+  options: [
+    "Export the stage using `UsdStage::Export()` to write a single USDC file",
+    "Flatten the stage to a single layer and rewrite asset paths using a USDZ package",
+    "Use sublayers to separate internal metadata from the geometry data",
+    "Convert all payloads to references before sharing"
+  ],
+  answer: [1],
+  explanation: "Preparing an asset for external delivery typically involves <strong>flattening</strong> the layer stack into a single layer (removing composition complexity), rewriting internal asset paths to be relative, and packaging everything as a <strong>USDZ archive</strong>—a zip-based self-contained format designed for portability."
+},
+{
+  id: 11, domain: "Composition",
+  text: "Which statement best describes the difference between `Inherits` and `Specializes` in USD composition?",
+  multi: false,
+  options: [
+    "Inherits is used for mesh geometry; Specializes is used for shading graphs",
+    "Both arcs behave identically; the naming difference is purely semantic",
+    "Inherits allows a class prim's opinions to be overridden by local opinions on the inheriting prim, whereas Specializes keeps the base class's refinements as stronger",
+    "Specializes is used for payloads; Inherits is used for references"
+  ],
+  answer: [2],
+  explanation: "<strong>Inherits</strong> follows normal LIVERPS ordering—local opinions on the inheriting prim override the class prim. <strong>Specializes</strong> inverts this: the base class's specialized opinions propagate through to be stronger than the specializing prim's own local opinions. This makes Specializes useful for 'refinements that should always hold' like material look-dev overrides."
+},
+{
+  id: 12, domain: "Composition",
+  text: "A studio has 500 tree assets that all share the same wind animation cycle. Which approach uses the least memory and disk I/O at render time?",
+  multi: false,
+  options: [
+    "Copy the animation data into each tree asset's USD file",
+    "Use USD value clips to share a single animation layer across all tree instances",
+    "Bake animation into USDC crate format for each tree",
+    "Use variant sets with one variant per frame of animation"
+  ],
+  answer: [1],
+  explanation: "<strong>Value clips</strong> allow many prims to share time-sampled animation data from a single layer file, reading only the relevant time range on demand. This is far more efficient than duplicating animation data per asset, and is the canonical USD approach for instanced procedural animation."
+},
+{
+  id: 13, domain: "Composition",
+  text: "A prim at `/World/Car` has a reference to `car.usda`, and inside that file the `Engine` prim is defined. A shot layer has an `over` at `/World/Car/Engine` to change its color. The artist reports the color isn't changing. What is the most likely cause?",
+  multi: false,
+  options: [
+    "The `over` specifier cannot target prims inside references",
+    "The prim path `/World/Car/Engine` is incorrect—it should be `/Car/Engine`",
+    "The `over` in the shot layer is authored in a layer that is weaker than the reference arc's internal layer",
+    "References do not allow any child prims to be overridden"
+  ],
+  answer: [2],
+  explanation: "If the shot layer's opinion on `/World/Car/Engine` is authored in a sublayer that is <em>weaker</em> than the layer stack the reference resides in, LIVERPS will not favor it. For local opinions to win over reference content, the override must be in a layer that is <strong>stronger</strong> (higher in the sublayer stack or the edit target)."
+},
+{
+  id: 14, domain: "Composition",
+  text: "When is it NOT appropriate to use variant sets to structure an asset?",
+  multi: false,
+  options: [
+    "When the asset has multiple material finishes (e.g., polished vs. matte)",
+    "When the asset has different levels of detail (LOD)",
+    "When the differences between variants require entirely different prim hierarchies that are incompatible with each other",
+    "When the asset needs both geometric and shading variations"
+  ],
+  answer: [2],
+  explanation: "Variant sets work best when all variants share the same prim hierarchy—they swap opinions, not structure. If two 'variants' would require fundamentally <strong>different hierarchies</strong> (e.g., a car vs. a helicopter), references or separate assets are more appropriate. Forcing incompatible hierarchies into variants leads to fragile pipelines."
+},
+{
+  id: 15, domain: "Composition",
+  text: "A layer offset of `offset=24, scale=2` is applied to a reference. An attribute time sample originally at time 6 in the referenced layer will be evaluated at what time on the referencing stage?",
+  multi: false,
+  options: [
+    "Time 36 on the stage (6 × 2 + 24)",
+    "Time 15 on the stage (6 + 24 / 2)",
+    "Time 48 on the stage (6 × 2 × 24 / 6)",
+    "Time 3 on the stage (6 / 2)"
+  ],
+  answer: [0],
+  explanation: "A USD <strong>layer offset</strong> transforms layer-local time to stage time using the formula: <em>stageTime = localTime × scale + offset</em>. So: 6 × 2 + 24 = <strong>36</strong>. Layer offsets are the mechanism for placing the same animation at different points in time (e.g., staggering a shared walk cycle across multiple characters)."
+},
+{
+  id: 16, domain: "Composition",
+  text: "Which of the following statements about USD encapsulation is correct?",
+  multi: false,
+  options: [
+    "Sublayers added inside a referenced layer are visible to the referencing stage and can have their opinions overridden",
+    "Composition arcs authored inside a referenced layer (nested sublayers, references within a reference) are encapsulated and cannot be overridden by the referencing stage",
+    "Encapsulation only applies to payloads, not to references",
+    "Encapsulation prevents prims inside a reference from being traversed by the referencing stage"
+  ],
+  answer: [1],
+  explanation: "<strong>Encapsulation</strong> means that the internal composition of a referenced asset (its own sublayers, references, variant sets, etc.) is evaluated independently and the referencing stage cannot insert opinions into that internal composition. The referencing stage can override <em>values</em> on the composed prims, but cannot alter how the referenced asset is composed internally."
+},
+
+// ── CONTENT AGGREGATION (7) ─────────────────────────
+{
+  id: 17, domain: "Content Aggregation",
+  text: "A scene contains 10,000 tree prims all using `instanceable = true` and pointing to the same prototype. An artist wants to change the bark color on just one specific tree. What happens if they directly set `primvars:displayColor` on that single tree prim?",
+  multi: false,
+  options: [
+    "The change propagates to all trees sharing the prototype",
+    "The prim is automatically de-instanced and the change applies only to that tree, at the cost of losing instance optimization",
+    "USD ignores the override because instanced prims are read-only",
+    "The tree becomes invisible until the stage is reloaded"
+  ],
+  answer: [1],
+  explanation: "When you author opinions directly on an instanced prim that cannot be represented in the prototype, USD will <strong>de-instance</strong> that prim—it no longer shares the prototype and its memory savings are lost. The change applies only to that individual prim. To avoid de-instancing, overrides should be authored via instance proxies or variant sets on the prototype."
+},
+{
+  id: 18, domain: "Content Aggregation",
+  text: "What is the key functional difference between USD native (scenegraph) instancing and point instancing using `UsdGeomPointInstancer`?",
+  multi: false,
+  options: [
+    "Native instancing works on entire subtrees of prims; point instancing efficiently places many copies of prototype geometry at positions defined by point arrays",
+    "Native instancing is only for geometry; point instancing is only for materials",
+    "Point instancing supports LIVERPS composition; native instancing does not",
+    "Native instancing requires USDC format; point instancing requires USDA format"
+  ],
+  answer: [0],
+  explanation: "<strong>Native scenegraph instancing</strong> marks entire prim subtrees as instanceable, sharing them via a prototype. <strong>Point instancing</strong> (`UsdGeomPointInstancer`) encodes many placements of geometry using compact position, orientation, and scale arrays — ideal for millions of copies (foliage, crowds) where per-instance scenegraph prims would be prohibitively expensive."
+},
+{
+  id: 19, domain: "Content Aggregation",
+  text: "In a model hierarchy, which `kind` value should be used for a prim that acts as the root of a self-contained, referenceable asset (e.g., a single prop like a chair)?",
+  multi: false,
+  options: [
+    "group",
+    "assembly",
+    "component",
+    "subcomponent"
+  ],
+  answer: [2],
+  explanation: "A <strong>component</strong> is the leaf-level model kind for a self-contained, referenceable asset. It may not contain other models as children. An <strong>assembly</strong> is a collection of components/groups. <strong>Group</strong> is for organizational containers of models. <strong>Subcomponent</strong> is for internal parts within a component that should not be referenced independently."
+},
+{
+  id: 20, domain: "Content Aggregation",
+  text: "A set-dressing stage references the same building asset 50 times in a city block scene. What is the recommended way to ensure memory efficiency for this repeated asset?",
+  multi: false,
+  options: [
+    "Set `instanceable = true` on each referencing prim so USD can share a single prototype",
+    "Copy the asset's USD layer into a single merged layer with all 50 prims inlined",
+    "Use 50 separate payload arcs and unload them after set-dressing is complete",
+    "Convert the asset to USDA format so it is easier to duplicate"
+  ],
+  answer: [0],
+  explanation: "Setting <strong>`instanceable = true`</strong> on prims that reference the same asset causes USD to create a single prototype and share it across all instances. This dramatically reduces memory usage for repeated assets. It is the primary mechanism for efficient aggregation of repeated content in large scenes."
+},
+{
+  id: 21, domain: "Content Aggregation",
+  text: "To hide specific instances in a `UsdGeomPointInstancer` without removing them from the prototype list, which attribute should be used?",
+  multi: false,
+  options: [
+    "Set `visibility = invisible` on the PointInstancer prim itself",
+    "Remove the points from the `positions` array for the instances you want hidden",
+    "Use the `invisibleIds` attribute on the PointInstancer to list the instance indices to hide",
+    "Set `active = false` on the PointInstancer's prototype prim"
+  ],
+  answer: [2],
+  explanation: "The <strong>`invisibleIds`</strong> attribute on `UsdGeomPointInstancer` allows specific instance indices to be hidden efficiently without restructuring the prototype list or positions array. This is the correct and performant way to selectively hide individual point instances."
+},
+{
+  id: 22, domain: "Content Aggregation",
+  text: "An `over` prim is authored in an assembly stage to change the color of an instanced component. The component prim has `instanceable = true`. What is the effect of this override?",
+  multi: false,
+  options: [
+    "The override applies to all instances sharing that prototype",
+    "The override is silently ignored because instanced prims cannot have local overrides",
+    "USD automatically creates an instance proxy, and the override applies only to that specific instance, potentially de-instancing it",
+    "The override forces the component to become a group kind"
+  ],
+  answer: [2],
+  explanation: "Overrides on an <strong>instance proxy</strong> (the virtual prim that represents one instance) may cause de-instancing of that specific instance if the override cannot be represented on the shared prototype. The override applies to just that instance. Alternatively, if the override can be expressed via variants on the prototype, de-instancing can be avoided."
+},
+{
+  id: 23, domain: "Content Aggregation",
+  text: "What is the primary benefit of using the reference/payload pattern (reference for the asset interface, payload for the heavy geometry) in an asset's internal structure?",
+  multi: false,
+  options: [
+    "It separates metadata and variant set definitions from heavy mesh data, allowing tools to query asset metadata without loading geometry",
+    "It ensures that material overrides are always applied after geometry is loaded",
+    "It prevents composition errors when the same asset is referenced multiple times",
+    "It converts geometry to USDC format automatically on first load"
+  ],
+  answer: [0],
+  explanation: "The <strong>reference/payload pattern</strong> places the asset's interface (metadata, variant sets, extentsHint) in the reference layer and heavy geometry in the payload. Tools and pipeline stages can open the stage, inspect asset metadata, and manage working sets—all <em>without</em> loading the heavy payload geometry. This is critical for performance in large-scale scenes."
+},
+
+// ── CUSTOMIZING USD (4) ──────────────────────────────
+{
+  id: 24, domain: "Customizing USD",
+  text: "A pipeline needs to store proprietary simulation attributes on USD prims that are not part of any built-in schema. The attributes must be discoverable by other tools without parsing raw USD text. Which approach is most appropriate?",
+  multi: false,
+  options: [
+    "Prefix all attributes with `userProperties:` and document them in a wiki",
+    "Create a custom USD API schema that defines the attributes, and distribute the schema plugin to all tools",
+    "Store simulation data in USD metadata as string-encoded JSON",
+    "Write all simulation attributes as relationships pointing to a separate Scope prim"
+  ],
+  answer: [1],
+  explanation: "A <strong>custom API schema</strong> is the correct way to add proprietary attributes to USD prims in a way that is type-safe, discoverable, and distributable. The schema is compiled into a USD plugin and registered with the `PlugRegistry`, making it available to any tool in the pipeline that loads the plugin."
+},
+{
+  id: 25, domain: "Customizing USD",
+  text: "What is the difference between an IsA schema and an API schema in USD?",
+  multi: false,
+  options: [
+    "IsA schemas define the prim type (e.g., Mesh, Sphere, Xform); API schemas add additional properties to any prim without changing its type",
+    "IsA schemas are only for geometry; API schemas are only for materials",
+    "API schemas replace IsA schemas in modern USD; IsA schemas are deprecated",
+    "IsA schemas require C++ implementation; API schemas can only be implemented in Python"
+  ],
+  answer: [0],
+  explanation: "<strong>IsA schemas</strong> define a prim's fundamental type—a prim IS a Mesh, IS a Sphere, IS an Xform. Only one IsA schema can apply to a prim. <strong>API schemas</strong> are applied additively (`prepend apiSchemas`) and contribute additional properties without changing the prim's type. Multiple API schemas can be applied to the same prim."
+},
+{
+  id: 26, domain: "Customizing USD",
+  text: "A studio wants USD to resolve asset paths like `asset://props/chair.usda` using an internal asset database instead of the filesystem. Which USD extension point handles this?",
+  multi: false,
+  options: [
+    "A custom file format plugin that registers the `asset://` URI scheme",
+    "A custom `ArResolver` (Asset Resolver) plugin that translates logical paths to physical paths",
+    "A `UsdStage` sublayer that maps virtual paths to real file paths",
+    "A variant set that stores alternate paths per environment"
+  ],
+  answer: [1],
+  explanation: "The <strong>Asset Resolution (Ar)</strong> library provides the `ArResolver` interface. A custom `ArResolver` plugin intercepts all asset path resolution calls in USD and can implement arbitrary logic—querying a database, applying version pinning, or translating logical URIs to filesystem paths. This is the correct extension point for custom asset management."
+},
+{
+  id: 27, domain: "Customizing USD",
+  text: "A developer needs to create a new type of USD prim that represents a proprietary simulation domain object. The prim must appear as its own type when queried (e.g., `prim.IsA<MySimObject>()`). Which base class should the schema inherit from?",
+  multi: false,
+  options: [
+    "UsdAPISchemaBase, because it allows the schema to be applied to any prim",
+    "UsdSchemaBase, the root base class for all schemas",
+    "UsdTyped, because it is the base class for all typed (IsA) schemas",
+    "UsdGeomXformable, because all scene objects must be transformable"
+  ],
+  answer: [2],
+  explanation: "<strong>UsdTyped</strong> is the base class for all <em>typed</em> (IsA) schemas—schemas that give a prim a specific type identity. API schemas, which are applied additively without changing prim type, inherit from `UsdAPISchemaBase`. For a new prim type that can be tested with `IsA<>`, the correct base is `UsdTyped`."
+},
+
+// ── DATA EXCHANGE (11) ───────────────────────────────
+{
+  id: 28, domain: "Data Exchange",
+  text: "A DCC exporter produces a USDA file with `upAxis = \"Y\"` and `metersPerUnit = 0.01`. Another tool imports this file expecting `upAxis = \"Z\"` and `metersPerUnit = 1.0`. What does USD do automatically during composition?",
+  multi: false,
+  options: [
+    "USD automatically reorients and rescales all geometry to match the importing tool's settings",
+    "USD does not automatically convert axis or units—the consuming application is responsible for interpreting and handling these metadata values",
+    "USD raises a fatal error and refuses to compose layers with mismatched axis settings",
+    "USD uses the root layer's upAxis and metersPerUnit to override all sublayers"
+  ],
+  answer: [1],
+  explanation: "USD treats `upAxis` and `metersPerUnit` as <strong>advisory metadata</strong>. It does not automatically transform geometry. Applications are responsible for reading these values and applying any necessary conversion. This is a common source of scale and orientation bugs when exchanging assets between DCCs."
+},
+{
+  id: 29, domain: "Data Exchange",
+  text: "A technical director must decide between storing a large scene as USDA (ASCII) or USDC (binary crate). Which statement correctly describes the trade-offs?",
+  multi: false,
+  options: [
+    "USDA is faster to read and write; USDC is human-readable for debugging",
+    "USDC offers better read performance and smaller file sizes; USDA is human-readable and easier to diff/version-control",
+    "Both formats have identical performance; the choice is purely aesthetic",
+    "USDC supports time samples; USDA does not"
+  ],
+  answer: [1],
+  explanation: "<strong>USDC</strong> (crate format) is a binary, memory-mapped format designed for performance—faster reads, smaller files, and efficient random access to time samples. <strong>USDA</strong> is human-readable ASCII, making it invaluable for debugging, version control diffs, and hand-authoring small files. Large production assets should use USDC; interface/config layers can use USDA."
+},
+{
+  id: 30, domain: "Data Exchange",
+  text: "A studio is building a pipeline validator for assets exported from a DCC. Which USD tool and API is specifically designed for compliance checking of USD assets?",
+  multi: false,
+  options: [
+    "`usdcat` — converts between layer formats and validates syntax",
+    "`usdzip` — packages assets and validates embedded paths",
+    "`usdchecker` — runs a suite of compliance checks on a USD layer or USDZ file",
+    "`usdview` — visualizes the composed stage and reports composition errors"
+  ],
+  answer: [2],
+  explanation: "<strong>`usdchecker`</strong> is the USD toolset's dedicated compliance validator. It runs a set of rules (checking for valid defaultPrim, correct extent attributes, proper material bindings, etc.) and reports errors and warnings. It is the starting point for building automated asset validation in a DCC export pipeline."
+},
+{
+  id: 31, domain: "Data Exchange",
+  text: "A studio is implementing a round-trip export/import of a character between Maya and USD. After export to USD and reimport to Maya, the character's normals are flipped. What is the most likely cause?",
+  multi: false,
+  options: [
+    "USDA format does not support normal vectors",
+    "The `upAxis` or winding order convention differs between Maya and the USD exporter, causing an axis flip that inverts face normals",
+    "The `metersPerUnit` value changed, scaling the normals incorrectly",
+    "USD stores normals as relationships, not attributes, causing Maya's importer to misinterpret them"
+  ],
+  answer: [1],
+  explanation: "Normal flipping on round-trip is almost always caused by a mismatch in <strong>coordinate handedness or winding order</strong>—often combined with an `upAxis` flip (Y-up vs Z-up). When geometry is reoriented to match a different axis convention, face winding is inverted, which flips surface normals. The exporter must correctly handle axis conversion."
+},
+{
+  id: 32, domain: "Data Exchange",
+  text: "What is the conceptual difference between a USD exporter and a USD converter?",
+  multi: false,
+  options: [
+    "An exporter saves DCC-native data to USD format; a converter transforms data between USD and another 3D format (e.g., glTF)",
+    "An exporter uses Python; a converter uses C++",
+    "An exporter only handles geometry; a converter handles all data types including materials and animation",
+    "There is no difference—the terms are interchangeable in OpenUSD documentation"
+  ],
+  answer: [0],
+  explanation: "An <strong>exporter</strong> translates data from a DCC application's internal representation into USD. A <strong>converter</strong> transforms data between two file formats (e.g., USD to glTF, USD to FBX) outside any specific DCC application. Both involve <em>conceptual data mapping</em>—understanding how concepts in one system map to USD (or vice versa)."
+},
+{
+  id: 33, domain: "Data Exchange",
+  text: "Which USDA attribute would you check to determine whether a given `.usd` file is actually stored in ASCII or binary crate format?",
+  multi: false,
+  options: [
+    "Read the `format` metadata from the stage's root layer",
+    "Check the file extension: `.usda` = ASCII, `.usdc` = binary, `.usd` = either—inspect the magic bytes or use `usdcat --flatten`",
+    "Binary and ASCII cannot be distinguished without fully parsing the file",
+    "Check whether `crate = true` appears in the file header"
+  ],
+  answer: [1],
+  explanation: "The `.usd` extension is ambiguous—it can be either ASCII or binary. The reliable way to determine format is to inspect the <strong>magic bytes</strong> at the start of the file (`PXR-USDC` for binary crate, `#usda` for ASCII), or to use the `usdcat` command which handles both and can convert between them."
+},
+{
+  id: 34, domain: "Data Exchange",
+  text: "A USDZ file is described as a 'self-contained USD package.' What makes USDZ distinct from a regular USD layer?",
+  multi: false,
+  options: [
+    "USDZ is a compressed zip archive that bundles USD layers and their referenced assets (textures, etc.) into a single file",
+    "USDZ is a binary format that is more compact than USDC",
+    "USDZ is read-only and cannot be modified after creation",
+    "USDZ uses a different schema system than standard USD"
+  ],
+  answer: [0],
+  explanation: "<strong>USDZ</strong> is a zip-based archive that packages one or more USD layers along with all referenced assets (textures, materials, etc.) into a single portable file. The zip is <em>uncompressed</em> for memory-mappable access. This makes USDZ ideal for sharing self-contained assets for AR (e.g., Apple Reality Composer) or external delivery."
+},
+{
+  id: 35, domain: "Data Exchange",
+  text: "When writing a USD importer for a DCC that receives geometry from an external source, what is the recommended approach for handling geometry that uses a different coordinate up-axis than USD expects?",
+  multi: false,
+  options: [
+    "Rotate all incoming point positions by the necessary matrix before writing them to USD",
+    "Write the `upAxis` metadata in the root layer to reflect the source coordinate system, and let all consuming tools handle the difference",
+    "Skip all geometry that does not match the expected up-axis",
+    "Store the transformation in a variant set so users can switch between axis conventions"
+  ],
+  answer: [1],
+  explanation: "The recommended practice is to write the correct <strong>`upAxis`</strong> metadata in the USD layer's header to accurately document the source convention, rather than baking a rotation into the geometry data. This preserves the original data fidelity and lets downstream consumers apply the necessary transform. Baking in a compensating rotation can cause compounding errors."
+},
+{
+  id: 36, domain: "Data Exchange",
+  text: "A data mapping document needs to describe how a proprietary material model maps to USD. The material has an 'anisotropy direction' attribute that has no direct equivalent in `UsdPreviewSurface`. What is the best strategy?",
+  multi: false,
+  options: [
+    "Ignore the attribute entirely since USD cannot represent it",
+    "Store it as a custom attribute using the `userProperties:` namespace and document the mapping",
+    "Approximate it using the UsdPreviewSurface `roughness` attribute with a comment",
+    "Store the value in stage-level metadata as a string"
+  ],
+  answer: [1],
+  explanation: "For attributes that have no USD equivalent, the best practice is to store them as <strong>custom attributes</strong> in the `userProperties:` namespace (or a pipeline-specific namespace), and <strong>document the conceptual mapping</strong> so importers and exporters can correctly interpret them. This preserves round-trip fidelity without breaking schema compliance."
+},
+{
+  id: 37, domain: "Data Exchange",
+  text: "When converting a USD scene to glTF, which USD concept does NOT have a direct glTF equivalent and requires special handling or loss of fidelity?",
+  multi: false,
+  options: [
+    "Mesh vertex positions (points array)",
+    "PBR material parameters (roughness, metallic)",
+    "USD composition arcs (references, variants, payloads)",
+    "UV texture coordinates stored as primvars"
+  ],
+  answer: [2],
+  explanation: "glTF is a <strong>flattened delivery format</strong>—it has no concept of composition arcs, variant sets, payloads, or sublayers. When converting from USD to glTF, the stage must be flattened (composition evaluated) and the resulting geometry/material data exported. Composition arcs are inherently lost in the conversion—this is a significant fidelity trade-off."
+},
+{
+  id: 38, domain: "Data Exchange",
+  text: "A USD validator finds that an exported mesh's `extent` attribute does not match the actual bounding box of its `points`. Why does this matter for the pipeline?",
+  multi: false,
+  options: [
+    "The `extent` attribute only affects rendering quality, not pipeline functionality",
+    "An incorrect `extent` causes USD's frustum culling and bounding box queries to return wrong results, breaking LOD selection, camera framing, and scene optimization tools",
+    "The `extent` attribute is purely cosmetic metadata and has no functional effect",
+    "USD automatically recalculates `extent` at runtime so mismatches are corrected silently"
+  ],
+  answer: [1],
+  explanation: "The <strong>`extent`</strong> attribute is used by renderers, layout tools, and pipeline utilities for frustum culling, bounding box queries, and automatic camera framing. An incorrect extent means these systems will make wrong decisions—objects may be culled when visible, or bounding boxes in UI will be wrong. Exporters must always recompute and write accurate extents."
+},
+
+// ── DATA MODELING (9) ────────────────────────────────
+{
+  id: 39, domain: "Data Modeling",
+  text: "A primvar is authored on a mesh with interpolation `faceVarying`. The mesh has 100 faces, each a quad (4 vertices). How many values must the primvar array contain?",
+  multi: false,
+  options: [
+    "100 — one per face",
+    "400 — one per face-vertex (4 vertices × 100 faces)",
+    "The number of unique vertices in the mesh",
+    "1 — primvars with faceVarying interpolation store a single averaged value"
+  ],
+  answer: [1],
+  explanation: "<strong>faceVarying</strong> interpolation stores one value per face-vertex—that is, per each corner of each face (even if vertices are shared). For 100 quads: 4 vertices × 100 faces = <strong>400</strong> values. This is the finest-grained interpolation and is used for attributes like UVs that can differ at shared vertices."
+},
+{
+  id: 40, domain: "Data Modeling",
+  text: "Which value type should be used to store a 3×3 rotation matrix as a USD attribute?",
+  multi: false,
+  options: [
+    "float3[] — an array of three float3 vectors",
+    "matrix3d — a double-precision 3×3 matrix type provided by Sdf",
+    "token — encoded as a string representation",
+    "quatd — a double-precision quaternion"
+  ],
+  answer: [1],
+  explanation: "USD's <strong>Sdf type system</strong> includes `matrix3d` (3×3 double-precision matrix) and `matrix4d` (4×4 double-precision matrix) as native value types. Using the correct matrix type ensures proper interpolation, schema validation, and cross-application interoperability. A `quatd` is an alternative for rotations but represents orientation differently."
+},
+{
+  id: 41, domain: "Data Modeling",
+  text: "What is the purpose of `custom` keyword when declaring an attribute in USDA?",
+  multi: false,
+  options: [
+    "It marks the attribute as mandatory for the schema to be valid",
+    "It indicates that the attribute is not defined in any applied schema—it is an ad-hoc attribute added outside schema definitions",
+    "It enables the attribute to accept arbitrary value types at runtime",
+    "It prevents the attribute from being composed across layers"
+  ],
+  answer: [1],
+  explanation: "The <strong>`custom`</strong> keyword in USDA marks an attribute as user-defined—it does not belong to any applied typed or API schema. While this provides flexibility, it is generally discouraged in production pipelines because custom attributes are not type-validated by schemas. Prefer defining a proper API schema for structured pipeline data."
+},
+{
+  id: 42, domain: "Data Modeling",
+  text: "An attribute has a default value of `1.0` and a time sample at time 10 of `5.0`. What value does USD return when querying this attribute at time 5 (assuming linear interpolation is enabled)?",
+  multi: false,
+  options: [
+    "1.0 — the default value is always used when no time sample exactly matches",
+    "5.0 — the nearest time sample value is used",
+    "3.0 — USD interpolates between the default value (1.0) and the time sample (5.0) at the midpoint",
+    "The default value is not used for time-sampled attributes; USD returns `None`"
+  ],
+  answer: [0],
+  explanation: "In USD, <strong>default values do not participate in time sample interpolation</strong>. They are the 'held' value for time codes before the first time sample, after the last time sample, or when there are no time samples at all—but USD does NOT interpolate between a default value and a time sample. At time 5 (before the only time sample at 10), USD returns the <strong>default value 1.0</strong>."
+},
+{
+  id: 43, domain: "Data Modeling",
+  text: "A developer is choosing between representing mesh UVs as a `texCoord2f[]` attribute versus a `texCoord2f[]` primvar. Why are primvars preferred for UV coordinates?",
+  multi: false,
+  options: [
+    "Primvars are faster to read than regular attributes at render time",
+    "Primvars carry interpolation metadata, support indexed arrays for compression, and are automatically inherited by child prims through the primvar inheritance mechanism",
+    "Regular attributes cannot store 2D float arrays in USD",
+    "Primvars are the only attribute type that can be time-sampled"
+  ],
+  answer: [1],
+  explanation: "<strong>Primvars</strong> (primitive variables) have several advantages over regular attributes for per-geometry data: they carry <em>interpolation metadata</em> (vertex, faceVarying, etc.) so renderers know how to sample them, they support <em>indexed arrays</em> to avoid value duplication, and they <em>inherit</em> down the prim hierarchy. These properties make them essential for UV maps, display colors, and other renderer-consumed per-geometry data."
+},
+{
+  id: 44, domain: "Data Modeling",
+  text: "Custom metadata in USD is distinct from regular attributes. Which of the following is a correct statement about custom metadata?",
+  multi: false,
+  options: [
+    "Custom metadata is stored on prims and can be time-sampled like attributes",
+    "Custom metadata must be declared in a schema plugin's plugInfo.json before it can be authored in a layer",
+    "Custom metadata can be authored freely on any prim without prior registration, but it is limited to string values",
+    "Custom metadata appears in the composed value stack and follows LIVERPS strength ordering like attributes"
+  ],
+  answer: [1],
+  explanation: "While <em>some</em> metadata can be authored freely, <strong>custom metadata</strong> that needs to be validated and properly typed must be declared in a schema plugin's <strong>plugInfo.json</strong>. Metadata is not time-sampable, does not appear in the property stack like attributes, and follows different composition rules. Unregistered metadata may appear as 'unregistered' and behave unexpectedly across tools."
+},
+{
+  id: 45, domain: "Data Modeling",
+  text: "A mesh is authored with points at one position, but after updating the `points` attribute with new positions, the mesh appears incorrectly culled in the renderer. What attribute was likely not updated?",
+  multi: false,
+  options: [
+    "faceVertexIndices",
+    "normals",
+    "extent",
+    "primvars:displayColor"
+  ],
+  answer: [2],
+  explanation: "The <strong>`extent`</strong> attribute stores the axis-aligned bounding box of the mesh. Renderers use it for frustum culling. When `points` are updated to new positions, `extent` must be recalculated and updated accordingly. If `extent` still reflects the old positions, the renderer may incorrectly cull the mesh even when it is within the camera's view frustum."
+},
+{
+  id: 46, domain: "Data Modeling",
+  text: "Which primvar interpolation mode stores exactly one value for the entire prim, regardless of how many vertices or faces it has?",
+  multi: false,
+  options: [
+    "vertex",
+    "faceVarying",
+    "uniform",
+    "constant"
+  ],
+  answer: [3],
+  explanation: "<strong>Constant</strong> interpolation stores a single value that applies to the entire primitive—one value for the whole mesh. `vertex` stores one value per vertex, `faceVarying` stores one per face-vertex, and `uniform` stores one per face. `constant` is used for prim-wide values like a single display color for the entire object."
+},
+{
+  id: 47, domain: "Data Modeling",
+  text: "A relationship in USD differs from an attribute in a fundamental way. Which statement correctly describes this difference?",
+  multi: false,
+  options: [
+    "Relationships store typed values (float, int, token); attributes store prim paths",
+    "Relationships point to other prims or properties by path; attributes store typed values",
+    "Relationships are time-sampled; attributes are not",
+    "Attributes can compose across layers; relationships cannot"
+  ],
+  answer: [1],
+  explanation: "<strong>Attributes</strong> store typed values (float, int, string, color, matrix, etc.) on a prim. <strong>Relationships</strong> store targets—paths to other prims or properties in the scenegraph. The canonical use of a relationship is `material:binding`, which points from a mesh prim to a material prim. Relationships cannot hold data values."
+},
+
+// ── DEBUGGING AND TROUBLESHOOTING (8) ───────────────
+{
+  id: 48, domain: "Debugging",
+  text: "An artist reports that a material override authored in `shot.usda` is not visible on the final render, even though the file is correctly included as a sublayer. After investigating, you discover `shot.usda` is the bottom-most sublayer. What is the likely issue?",
+  multi: false,
+  options: [
+    "Sublayers at the bottom of the stack have the weakest opinions; the override is being trumped by a stronger sublayer",
+    "Material overrides cannot be authored in sublayers—they must be in the root layer",
+    "The USDA format does not support material overrides in sublayers",
+    "The override requires `prepend references` to take effect in a sublayer"
+  ],
+  answer: [0],
+  explanation: "In a sublayer stack, <strong>layers listed earlier (closer to the top/root) have stronger opinions</strong>. A sublayer at the bottom has the weakest opinion strength. If a stronger sublayer (or the root layer itself) has a conflicting opinion on the same attribute, the bottom sublayer's value will be ignored. The fix is to move `shot.usda` higher in the sublayer order."
+},
+{
+  id: 49, domain: "Debugging",
+  text: "The `usdview` LayerStack tab is useful for debugging which type of issue?",
+  multi: false,
+  options: [
+    "Viewing all shaders compiled for a specific material",
+    "Seeing which layers contribute opinions to a selected prim and in what order, to trace where a value is coming from",
+    "Profiling USD load times per layer",
+    "Viewing all animation time samples on a selected attribute"
+  ],
+  answer: [1],
+  explanation: "The <strong>LayerStack tab</strong> in `usdview` displays the full layer stack contributing to a selected prim, showing each layer's opinions and their order. This is the essential debugging tool for tracing which layer is responsible for a specific value, why an expected override isn't taking effect, or why an unwanted opinion is winning."
+},
+{
+  id: 50, domain: "Debugging",
+  text: "A stage opens successfully but a referenced mesh appears invisible. Checking the composed stage, the mesh prim exists but `visibility = invisible`. The override was not intentionally set. Where should you look first?",
+  multi: false,
+  options: [
+    "Check if the mesh's `active` metadata was set to false in any layer",
+    "Use `UsdProperty::GetPropertyStack()` to find all layers contributing a `visibility` opinion, then identify which layer is setting it to invisible",
+    "Delete the mesh prim from the stage and re-reference the asset",
+    "Check if the mesh's `kind` is set to `subcomponent`, which hides prims by default"
+  ],
+  answer: [1],
+  explanation: "<strong>`UsdProperty::GetPropertyStack()`</strong> returns the ordered list of property specs contributing to an attribute, from strongest to weakest, across all layers. This is the correct API approach to trace an unwanted `visibility` value—it identifies exactly which layer file is authoring the invisible opinion so it can be fixed or muted."
+},
+{
+  id: 51, domain: "Debugging",
+  text: "What does `SdfChangeBlock` do, and when should it be used?",
+  multi: false,
+  options: [
+    "It prevents any changes from being authored on a layer after it is opened, making it effectively read-only",
+    "It batches multiple scene description changes together to minimize the number of change notifications sent to listeners, improving performance for bulk edits",
+    "It locks a specific prim so it cannot be overridden by downstream layers",
+    "It flushes pending layer changes to disk to prevent data loss"
+  ],
+  answer: [1],
+  explanation: "<strong>`SdfChangeBlock`</strong> defers USD's change processing notifications until the block goes out of scope. When making many changes to scene description (e.g., setting 10,000 attribute values), wrapping the operations in an `SdfChangeBlock` prevents the overhead of sending and processing individual change notifications for each edit—significantly improving bulk-edit performance."
+},
+{
+  id: 52, domain: "Debugging",
+  text: "A USD pipeline tool is reporting unexpected asset resolution failures for paths that worked previously. The tool uses a custom `ArResolver`. What is the most effective first debugging step?",
+  multi: false,
+  options: [
+    "Re-export all assets from the DCC in USDC format",
+    "Enable `TfDebug` categories related to asset resolution (e.g., `AR_RESOLVER_INIT`) to trace the resolver's decision logic",
+    "Switch from USDA to USDC format for all affected layers",
+    "Flatten the stage to remove all composition before testing resolution"
+  ],
+  answer: [1],
+  explanation: "<strong>`TfDebug`</strong> is USD's built-in debugging facility. Enabling relevant debug categories (set via `TF_DEBUG` environment variable or `TfDebug::SetDebugSymbolsByName()`) causes USD to print detailed trace information about the system being debugged. For asset resolution issues, categories like `AR_RESOLVER_INIT` expose the resolver's initialization and path-lookup behavior."
+},
+{
+  id: 53, domain: "Debugging",
+  text: "A character prim composed from multiple layers shows a translate value of `(0, 0, 0)` on the stage, but the artist says they set it to `(10, 0, 0)` in their shot layer. The shot layer is confirmed to be loaded. Which LIVERPS-related reason is most likely?",
+  multi: false,
+  options: [
+    "The `(0, 0, 0)` value must be authored by a local opinion in a stronger sublayer that overrides the artist's shot layer",
+    "USD clamps translate values to `(0, 0, 0)` for prims that are inside a reference",
+    "The shot layer's translate must be in a payload for it to take effect",
+    "The artist authored the translate on the wrong prim type—Xform prims cannot have translates"
+  ],
+  answer: [0],
+  explanation: "The most common cause of an override not taking effect is a <strong>stronger layer opinion</strong> overriding it. The `(0, 0, 0)` value is likely authored in a sublayer that is higher (stronger) in the stack than the artist's shot layer. Checking the LayerStack tab in usdview or using `GetPropertyStack()` would reveal which layer is winning."
+},
+{
+  id: 54, domain: "Debugging",
+  text: "When a USD stage takes a very long time to open, which approach is most appropriate for identifying the bottleneck?",
+  multi: false,
+  options: [
+    "Convert all layers to USDA format to make them human-readable for manual inspection",
+    "Use `TfMallocTag` or the USD `Trace` profiling system to measure time spent in specific subsystems (e.g., asset resolution, composition, payload loading)",
+    "Remove all variant sets from the scene description to simplify composition",
+    "Open the stage with a different Python version to check for interpreter overhead"
+  ],
+  answer: [1],
+  explanation: "USD includes a <strong>Trace profiling system</strong> and <strong>`TfMallocTag`</strong> for memory profiling. The Trace system records hierarchical timing data for USD operations, allowing developers to pinpoint exactly which subsystem (asset resolution, composition evaluation, payload loading, etc.) is consuming the most time during stage opening."
+},
+{
+  id: 55, domain: "Debugging",
+  text: "A pipeline reports that after muting a specific layer using `UsdStage::MuteLayer()`, some prims disappear entirely from the stage. What is the most likely explanation?",
+  multi: false,
+  options: [
+    "Muting a layer corrupts the stage's composition cache",
+    "The muted layer was the only layer defining those prims (e.g., with a `def` specifier), so removing it causes those prims to no longer exist in the composed stage",
+    "Muting a layer removes all of its sublayers recursively from composition",
+    "USD does not support muting layers that contain `def` specifiers"
+  ],
+  answer: [1],
+  explanation: "When a layer is muted, all of its scene description is excluded from composition. If a prim was <strong>only defined</strong> (`def`) in the muted layer—with no other layer contributing a `def` or `over`—the prim ceases to exist in the composed stage. Muting is a non-destructive debugging tool, but its effects on composition can be significant if the muted layer is load-bearing."
+},
+
+// ── PIPELINE DEVELOPMENT (10) ───────────────────────
+{
+  id: 56, domain: "Pipeline Development",
+  text: "A pipeline architect wants to design a USD layer strategy so that a lighting artist can override just the light intensities for a shot, without affecting the asset definitions or set dressing. Which layer strategy achieves this?",
+  multi: false,
+  options: [
+    "Package all lighting changes inside a variant set in the asset files",
+    "Add a dedicated shot lighting sublayer above the set-dressing layer in the root stage's sublayer stack, where lighting opinions can override the underlying layers",
+    "Use a payload arc for each light so its properties can be unloaded independently",
+    "Flatten the entire stage before the lighting artist works on it"
+  ],
+  answer: [1],
+  explanation: "The standard pipeline pattern is to have <strong>a dedicated shot layer</strong> for each department (layout, animation, lighting, FX), added as a sublayer with appropriate strength ordering. A lighting sublayer positioned above set-dressing layers gives lighting opinions priority, allowing non-destructive light intensity overrides without touching asset or set-dressing definitions."
+},
+{
+  id: 57, domain: "Pipeline Development",
+  text: "A pipeline must support both `metersPerUnit = 1.0` (meters) and `metersPerUnit = 0.01` (centimeters) for assets coming from different DCCs. Which practice ensures correct behavior in the composed stage?",
+  multi: false,
+  options: [
+    "Always set `metersPerUnit = 1.0` in every layer and bake a scale into the geometry",
+    "Document the `metersPerUnit` value in each asset's layer header accurately, and apply a compensating scale xform when referencing assets with a different unit into the stage",
+    "Use variant sets to store geometry at both scales and let the consumer choose",
+    "USD ignores `metersPerUnit` so no special handling is needed"
+  ],
+  answer: [1],
+  explanation: "The recommended practice is to <strong>accurately record `metersPerUnit`</strong> in each asset and apply an appropriate <strong>compensating scale transform</strong> (via an Xform prim) when referencing assets with different units into a unified stage. This preserves original geometry data fidelity while ensuring correct spatial scale relationships in the assembled scene."
+},
+{
+  id: 58, domain: "Pipeline Development",
+  text: "A pipeline tool needs to iterate over every prim in a stage that has a specific API schema applied. Which is the correct USD API pattern?",
+  multi: false,
+  options: [
+    "Traverse the stage and check `prim.GetTypeName()` for the schema name",
+    "Use `UsdStage::Traverse()` and filter prims using `prim.HasAPI<MyAPISchema>()`",
+    "Query the root layer's `subLayers` list and find layers that define the schema",
+    "Use `UsdPrimRange` with a `UsdTraverseInstanceProxies` predicate only"
+  ],
+  answer: [1],
+  explanation: "<strong>`UsdStage::Traverse()`</strong> (or `UsdPrimRange`) combined with <strong>`prim.HasAPI<MyAPISchema>()`</strong> is the correct pattern. `HasAPI` checks whether a specific API schema has been applied to a prim. `GetTypeName()` only returns the IsA schema type, not applied API schemas. For typed schemas, `prim.IsA<MySchema>()` is the correct check."
+},
+{
+  id: 59, domain: "Pipeline Development",
+  text: "A studio is adopting USD and needs to document their asset structure guidelines. Which of the following is a key principle recommended by the ASWF Asset Structure Guidelines?",
+  multi: false,
+  options: [
+    "All assets should be stored as a single monolithic USD file to minimize file count",
+    "Asset interfaces should expose variant sets and metadata at the top of the file structure, with heavy geometry deferred via payloads",
+    "Assets should never use variant sets, as they complicate pipeline tooling",
+    "All pipeline stages should write opinions to the same single layer file"
+  ],
+  answer: [1],
+  explanation: "The <strong>ASWF Asset Structure Guidelines</strong> (and the Principles of Scalable Asset Structure in OpenUSD) emphasize: expose asset interface (metadata, variants) at the top layer, defer heavy geometry via <strong>payloads</strong>, modularize workstreams into separate layers, and maintain a consistent, predictable hierarchy. This enables pipeline tools to query assets efficiently without loading all geometry."
+},
+{
+  id: 60, domain: "Pipeline Development",
+  text: "A pipeline uses `UsdNotice` to respond to stage changes. An artist rapidly edits 200 attributes in quick succession, and the change-notification callback is called 200 times, slowing the UI. What is the best solution?",
+  multi: false,
+  options: [
+    "Disable `UsdNotice` entirely during batch edits",
+    "Wrap the 200 attribute edits in an `SdfChangeBlock` so that only one batch of change notifications is sent when the block exits",
+    "Throttle the callback to fire at most once per second",
+    "Convert the stage to a new format before making bulk edits"
+  ],
+  answer: [1],
+  explanation: "Wrapping bulk edits in an <strong>`SdfChangeBlock`</strong> defers all change processing until the block exits, at which point a single consolidated change notice is sent. This is the correct and idiomatic USD solution for preventing excessive notification overhead during programmatic bulk edits, such as setting many attributes in a loop."
+},
+{
+  id: 61, domain: "Pipeline Development",
+  text: "A pipeline TD wants to flatten a stage to remove all composition arcs and produce a single-layer USD file for delivery. Which API call achieves this?",
+  multi: false,
+  options: [
+    "`UsdStage::Save()`",
+    "`UsdStage::Flatten()`",
+    "`UsdStage::Export()` with the `addSourceFileComment=False` option",
+    "`UsdStage::GetRootLayer().Flatten()`"
+  ],
+  answer: [1],
+  explanation: "<strong>`UsdStage::Flatten()`</strong> evaluates all composition on the stage and returns a new `SdfLayer` containing all the resolved scene description in a single, flat layer—all composition arcs are baked in and their internal structure is removed. This is the correct API for producing a composition-free delivery asset."
+},
+{
+  id: 62, domain: "Pipeline Development",
+  text: "Which of the following describes a valid use case for the `Flatten` operation in a production pipeline?",
+  multi: false,
+  options: [
+    "Flattening during daily artist iteration to simplify the layer stack for faster development",
+    "Flattening a complex multi-layer asset for external delivery to a vendor who does not have access to the pipeline's internal asset resolver",
+    "Flattening after each sublayer is added to improve composition performance",
+    "Flattening is required before any USDC binary encoding can occur"
+  ],
+  answer: [1],
+  explanation: "Flattening is most appropriate for <strong>external delivery</strong> when the recipient lacks access to the pipeline's internal tools (e.g., a custom `ArResolver` or proprietary schema plugins). Flattening bakes all composition and resolves all internal dependencies into a self-contained layer. It should NOT be used during active development as it destroys the non-destructive layering structure."
+},
+{
+  id: 63, domain: "Pipeline Development",
+  text: "A pipeline validates asset paths before publishing. Which property of USD paths makes this validation non-trivial?",
+  multi: false,
+  options: [
+    "USD paths always use absolute filesystem paths, so validation is straightforward",
+    "USD supports multiple asset path formats including relative paths, search paths, and custom URI schemes resolved by ArResolver—validation must account for all of these",
+    "USD only allows alphanumeric characters in paths, simplifying validation",
+    "Asset paths in USD are always validated automatically by the SdfLayer during authoring"
+  ],
+  answer: [1],
+  explanation: "USD asset paths can be <strong>relative filesystem paths, absolute paths, or arbitrary URI strings</strong> that a custom `ArResolver` translates. This means path validation cannot simply check for file existence—it must understand the resolver in play, handle search paths, and validate against whatever resolution scheme the pipeline uses. This complexity is why asset path validation is a first-class pipeline concern."
+},
+{
+  id: 64, domain: "Pipeline Development",
+  text: "A studio's animation pipeline generates USD layers with velocity attributes (`velocities`) on meshes in addition to position time samples. What is the primary reason for including velocity data?",
+  multi: false,
+  options: [
+    "Velocities are required for USD stages to compute correct bounding boxes",
+    "Velocities allow motion blur to be computed at render time using fewer position time samples, reducing file size and improving I/O performance",
+    "USD uses velocity attributes to interpolate between position time samples during composition",
+    "Velocities are needed for USD's physics simulation system to function"
+  ],
+  answer: [1],
+  explanation: "In USD, <strong>velocity attributes</strong> on geometry allow renderers to compute <em>motion blur</em> with fewer stored time samples. Instead of needing positions at many sub-frame time steps, a renderer can extrapolate motion-blurred positions from a single frame's position plus its velocity, dramatically reducing the number of time samples that need to be stored and read."
+},
+{
+  id: 65, domain: "Pipeline Development",
+  text: "A newly hired pipeline engineer must choose between using sublayers and references to combine layers from two different departments into a single stage. Which factor most clearly distinguishes when to use sublayers versus references?",
+  multi: false,
+  options: [
+    "Sublayers combine layers at the same prim namespace level; references graft an asset's prim hierarchy under a specific prim in the referencing stage",
+    "Sublayers support time-sampled data; references do not",
+    "References allow variant sets; sublayers do not allow variant sets",
+    "Sublayers are for materials only; references are for geometry"
+  ],
+  answer: [0],
+  explanation: "<strong>Sublayers</strong> merge content at the same namespace level—prims from sublayers appear as if they were all authored in the root layer. <strong>References</strong> graft another layer's prim hierarchy <em>under a specific prim</em> in the referencing stage. Use sublayers for 'overlays' that span the whole stage (e.g., a lighting pass); use references for including a specific asset at a specific point in the scene hierarchy."
+},
+
+// ── VISUALIZATION (5) ────────────────────────────────
+{
+  id: 66, domain: "Visualization",
+  text: "A `UsdPreviewSurface` material needs to read diffuse color from a UV-mapped texture. What is the correct node connection pattern?",
+  multi: false,
+  options: [
+    "Connect a UsdUVTexture node's `rgb` output directly to the UsdPreviewSurface's `diffuseColor` input; connect a UsdPrimvarReader_float2 to the UsdUVTexture's `st` input to supply UV coordinates",
+    "Connect the texture file path string directly to the UsdPreviewSurface's `diffuseColor` input",
+    "Set the `primvars:displayColor` attribute on the mesh and reference it via a UsdPreviewSurface input",
+    "Use a UsdShadeNodeGraph to store the texture path and bind it to the material's surface output"
+  ],
+  answer: [0],
+  explanation: "The standard `UsdPreviewSurface` shading network connects: a <strong>UsdPrimvarReader_float2</strong> (reads UV primvar) → <strong>UsdUVTexture</strong> (samples texture at those UVs) → <strong>UsdPreviewSurface `diffuseColor`</strong> input. This chain is the canonical way to drive material color from a UV-mapped texture in the UsdPreviewSurface shading model."
+},
+{
+  id: 67, domain: "Visualization",
+  text: "What is the purpose of `UsdGeomSubset` in the context of material binding?",
+  multi: false,
+  options: [
+    "It divides a mesh into separate files for more efficient loading",
+    "It defines a subset of a mesh's faces (or other elements) so that different materials can be bound to different parts of the same mesh prim",
+    "It creates LOD levels for a mesh that are automatically selected by the renderer",
+    "It is used to group multiple mesh prims together under a single material"
+  ],
+  answer: [1],
+  explanation: "<strong>`UsdGeomSubset`</strong> partitions a mesh's faces into named subsets, each represented as a child prim containing a list of face indices. Materials can then be bound to individual subsets using `UsdShadeMaterialBindingAPI`, allowing a single mesh prim to display different materials on different faces—essential for assets with multiple material regions."
+},
+{
+  id: 68, domain: "Visualization",
+  text: "A mesh prim in USD does not have `MaterialBindingAPI` applied, but a parent Xform prim does have a material binding. What material is used for the mesh at render time?",
+  multi: false,
+  options: [
+    "No material is applied—bindings do not inherit and the mesh renders with a default grey shader",
+    "The material bound on the closest ancestor prim (the parent Xform) is used through the material binding inheritance mechanism",
+    "The mesh searches all sibling prims for a valid material binding",
+    "USD picks the first material defined anywhere in the stage"
+  ],
+  answer: [1],
+  explanation: "Material bindings in USD <strong>inherit down the prim hierarchy</strong>. If a prim does not have its own material binding, USD walks up the ancestor chain and uses the binding from the nearest ancestor that has one. This allows a single binding on an Xform to apply to all geometry descendants, simplifying material assignment for complex hierarchies."
+},
+{
+  id: 69, domain: "Visualization",
+  text: "A `UsdLuxDomeLight` is added to a stage to provide environment lighting. The artist wants to orient the environment map so a specific feature (e.g., the sun) points in a particular direction. How is this achieved?",
+  multi: false,
+  options: [
+    "Modify the `textureFormat` attribute on the DomeLight to specify a rotation offset",
+    "Apply a rotation transform to the DomeLight prim using standard Xform operations (xformOp:rotateXYZ)",
+    "Set the `guideRadius` attribute to control light direction",
+    "DomeLights cannot be rotated—the texture must be pre-rotated before use"
+  ],
+  answer: [1],
+  explanation: "A `UsdLuxDomeLight` inherits from `UsdGeomXformable`, meaning it can have <strong>standard transform operations</strong> applied to it. Rotating the DomeLight prim using `xformOp:rotateXYZ` (or equivalent) rotates the environment map sphere accordingly, allowing precise control over the orientation of features in the HDRI/environment texture."
+},
+{
+  id: 70, domain: "Visualization",
+  text: "A mesh renders with a uniformly flat appearance—no shading variation despite having a complex shape. The material uses a physically-based shader. What is the most likely missing data?",
+  multi: false,
+  options: [
+    "The mesh is missing a `primvars:displayColor` primvar",
+    "The mesh is missing surface normals—without them, renderers cannot compute correct lighting angles and produce flat shading",
+    "The mesh is missing a `kind` metadata value",
+    "The UsdPreviewSurface roughness attribute is not set"
+  ],
+  answer: [1],
+  explanation: "A physically-based renderer computes shading by evaluating the angle between the surface <strong>normal</strong> and the light direction. If a mesh has no authored normals, the renderer may compute flat face normals (producing faceted shading) or fall back to a zero vector, resulting in completely flat, un-shaded appearance. Missing or corrupt normals are the most common cause of unexpected flat rendering on complex meshes."
+}
+
+]; // end questions array
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+const state = {
+  selections: {}, // qId -> Set of selected option indices
+  revealed: {},   // qId -> true
+  flags: {},      // qId -> true
+  submitted: false
+};
+
+// ═══════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════
+
+function getDomainSections() {
+  const order = ["Composition","Content Aggregation","Customizing USD","Data Exchange","Data Modeling","Debugging","Pipeline Development","Visualization"];
+  const map = {};
+  order.forEach(d => map[d] = []);
+  questions.forEach(q => {
+    const key = order.find(k => q.domain.includes(k.split(' ')[0])) || q.domain;
+    if (map[key]) map[key].push(q);
+  });
+  return { order, map };
+}
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  const { order, map } = getDomainSections();
+  order.forEach(domain => {
+    const qs = map[domain];
+    if (!qs || qs.length === 0) return;
+    const sh = document.createElement('div');
+    sh.className = 'section-header';
+    sh.setAttribute('data-domain', domain);
+    sh.textContent = domain;
+    container.appendChild(sh);
+    qs.forEach(q => {
+      container.appendChild(buildCard(q));
+    });
+  });
+}
+
+function buildCard(q) {
+  const card = document.createElement('div');
+  card.className = 'question-card';
+  card.id = `q-${q.id}`;
+  card.setAttribute('data-domain', q.domain);
+
+  const header = document.createElement('div');
+  header.className = 'q-header';
+  header.innerHTML = `
+    <div class="q-num">#${q.id}</div>
+    <div class="q-meta">
+      <div class="q-domain">${q.domain} · ${Math.round(getDomainWeight(q.domain))}% exam weight</div>
+      <div class="q-text">${q.text}</div>
+    </div>
+    <div class="q-expand-icon">▾</div>
+  `;
+  header.addEventListener('click', () => toggleCard(q.id));
+  card.appendChild(header);
+
+  const body = document.createElement('div');
+  body.className = 'q-body';
+  body.id = `body-${q.id}`;
+
+  if (q.multi) {
+    body.innerHTML += `<div class="multi-note">★ SELECT ALL THAT APPLY</div>`;
+  }
+
+  const opts = document.createElement('div');
+  opts.className = 'options';
+  const letters = ['A','B','C','D','E'];
+  q.options.forEach((opt, i) => {
+    const el = document.createElement('div');
+    el.className = 'option';
+    el.id = `opt-${q.id}-${i}`;
+    el.innerHTML = `<span class="opt-key">${letters[i]}</span><span class="opt-text">${opt}</span>`;
+    el.addEventListener('click', () => selectOption(q.id, i));
+    opts.appendChild(el);
+  });
+  body.appendChild(opts);
+
+  const actions = document.createElement('div');
+  actions.className = 'q-actions';
+  actions.innerHTML = `
+    <button onclick="checkAnswer(${q.id})">Check Answer</button>
+    <button onclick="revealExplanation(${q.id})">Show Explanation</button>
+    <button class="flag-btn" id="flag-${q.id}" onclick="toggleFlag(${q.id})">Flag</button>
+  `;
+  body.appendChild(actions);
+
+  const explanation = document.createElement('div');
+  explanation.className = 'explanation';
+  explanation.id = `exp-${q.id}`;
+  explanation.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+  body.appendChild(explanation);
+
+  card.appendChild(body);
+  return card;
+}
+
+function getDomainWeight(domain) {
+  const weights = {
+    "Composition": 23, "Content Aggregation": 10, "Customizing USD": 6,
+    "Data Exchange": 15, "Data Modeling": 13, "Debugging": 11,
+    "Pipeline Development": 14, "Visualization": 8
+  };
+  for (const [k,v] of Object.entries(weights)) {
+    if (domain.includes(k.split(' ')[0])) return v;
+  }
+  return 0;
+}
+
+function toggleCard(qId) {
+  const body = document.getElementById(`body-${qId}`);
+  const icon = document.querySelector(`#q-${qId} .q-expand-icon`);
+  body.classList.toggle('open');
+  icon.classList.toggle('open');
+}
+
+function selectOption(qId, idx) {
+  if (state.submitted) return;
+  const q = questions.find(x => x.id === qId);
+  if (!state.selections[qId]) state.selections[qId] = new Set();
+  if (q.multi) {
+    if (state.selections[qId].has(idx)) {
+      state.selections[qId].delete(idx);
+    } else {
+      state.selections[qId].add(idx);
+    }
+  } else {
+    state.selections[qId] = new Set([idx]);
+  }
+  renderOptions(qId, false);
+  updateStats();
+}
+
+function renderOptions(qId, showCorrect) {
+  const q = questions.find(x => x.id === qId);
+  const sel = state.selections[qId] || new Set();
+  const letters = ['A','B','C','D','E'];
+  q.options.forEach((_, i) => {
+    const el = document.getElementById(`opt-${qId}-${i}`);
+    el.className = 'option';
+    const isSelected = sel.has(i);
+    const isCorrect = q.answer.includes(i);
+    if (showCorrect) {
+      if (isSelected && isCorrect) el.classList.add('correct');
+      else if (isSelected && !isCorrect) el.classList.add('incorrect');
+      else if (!isSelected && isCorrect) el.classList.add('reveal-correct');
+    } else {
+      if (isSelected) el.classList.add('selected');
+    }
+  });
+}
+
+function checkAnswer(qId) {
+  const q = questions.find(x => x.id === qId);
+  const sel = state.selections[qId];
+  if (!sel || sel.size === 0) { alert('Please select an answer first.'); return; }
+  renderOptions(qId, true);
+  revealExplanation(qId);
+  const card = document.getElementById(`q-${qId}`);
+  const correct = setsEqual(sel, new Set(q.answer));
+  card.setAttribute('data-answered', correct ? 'correct' : 'incorrect');
+  state.revealed[qId] = true;
+  updateStats();
+}
+
+function revealExplanation(qId) {
+  const exp = document.getElementById(`exp-${qId}`);
+  const body = document.getElementById(`body-${qId}`);
+  exp.classList.add('visible');
+  if (!body.classList.contains('open')) toggleCard(qId);
+}
+
+function revealAll() {
+  questions.forEach(q => {
+    if (!state.revealed[q.id]) {
+      renderOptions(q.id, true);
+      revealExplanation(q.id);
+      const sel = state.selections[q.id];
+      const card = document.getElementById(`q-${q.id}`);
+      if (sel && sel.size > 0) {
+        const correct = setsEqual(sel, new Set(q.answer));
+        card.setAttribute('data-answered', correct ? 'correct' : 'incorrect');
+      }
+      state.revealed[q.id] = true;
+    }
+  });
+  updateStats();
+}
+
+function submitAll() {
+  state.submitted = true;
+  let correct = 0, incorrect = 0, skipped = 0;
+  const domainStats = {};
+
+  questions.forEach(q => {
+    const domain = q.domain;
+    if (!domainStats[domain]) domainStats[domain] = { c: 0, t: 0 };
+    domainStats[domain].t++;
+
+    const sel = state.selections[q.id];
+    renderOptions(q.id, true);
+    revealExplanation(q.id);
+    const card = document.getElementById(`q-${q.id}`);
+
+    if (!sel || sel.size === 0) {
+      skipped++;
+      card.setAttribute('data-answered', 'flagged');
+    } else if (setsEqual(sel, new Set(q.answer))) {
+      correct++;
+      domainStats[domain].c++;
+      card.setAttribute('data-answered', 'correct');
+    } else {
+      incorrect++;
+      card.setAttribute('data-answered', 'incorrect');
+    }
+    state.revealed[q.id] = true;
+  });
+
+  const total = correct + incorrect + skipped;
+  const pct = Math.round((correct / questions.length) * 100);
+
+  document.getElementById('res-pct').textContent = pct + '%';
+  document.getElementById('res-correct').textContent = correct;
+  document.getElementById('res-incorrect').textContent = incorrect;
+  document.getElementById('res-skipped').textContent = skipped;
+
+  const db = document.getElementById('domain-breakdown');
+  db.innerHTML = '';
+  Object.entries(domainStats).forEach(([domain, s]) => {
+    const pctD = s.t > 0 ? Math.round((s.c / s.t) * 100) : 0;
+    const color = pctD >= 70 ? '#4caf50' : pctD >= 50 ? '#ff9800' : '#f44336';
+    db.innerHTML += `<div class="domain-row">
+      <div class="domain-name">${domain}</div>
+      <div class="domain-score" style="color:${color}">${s.c}/${s.t} — ${pctD}%</div>
+    </div>`;
+  });
+
+  document.getElementById('results-panel').classList.add('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  updateStats();
+}
+
+function resetExam() {
+  Object.keys(state.selections).forEach(k => delete state.selections[k]);
+  Object.keys(state.revealed).forEach(k => delete state.revealed[k]);
+  Object.keys(state.flags).forEach(k => delete state.flags[k]);
+  state.submitted = false;
+  buildQuiz();
+  document.getElementById('results-panel').classList.remove('visible');
+  updateStats();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleFlag(qId) {
+  const btn = document.getElementById(`flag-${qId}`);
+  const card = document.getElementById(`q-${qId}`);
+  if (state.flags[qId]) {
+    delete state.flags[qId];
+    btn.classList.remove('flagged');
+    if (card.getAttribute('data-answered') === 'flagged') card.removeAttribute('data-answered');
+  } else {
+    state.flags[qId] = true;
+    btn.classList.add('flagged');
+  }
+  updateStats();
+}
+
+function filterDomain(domain, btn) {
+  document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.question-card, .section-header').forEach(el => {
+    if (domain === 'all') {
+      el.style.display = '';
+    } else {
+      const elDomain = el.getAttribute('data-domain') || '';
+      el.style.display = elDomain.includes(domain) ? '' : 'none';
+    }
+  });
+}
+
+function scrollToFirstUnanswered() {
+  for (const q of questions) {
+    const card = document.getElementById(`q-${q.id}`);
+    if (card && card.style.display !== 'none' && !state.revealed[q.id]) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.add('highlighted');
+      setTimeout(() => card.classList.remove('highlighted'), 1500);
+      return;
+    }
+  }
+  alert('All visible questions have been answered!');
+}
+
+function updateStats() {
+  let answered = 0, correct = 0, incorrect = 0, flagged = 0;
+  questions.forEach(q => {
+    if (state.revealed[q.id]) {
+      const sel = state.selections[q.id];
+      if (sel && sel.size > 0) {
+        answered++;
+        if (setsEqual(sel, new Set(q.answer))) correct++; else incorrect++;
+      }
+    }
+    if (state.flags[q.id]) flagged++;
+  });
+  document.getElementById('hdr-answered').textContent = answered;
+  document.getElementById('hdr-correct').textContent = correct;
+  document.getElementById('hdr-incorrect').textContent = incorrect;
+  document.getElementById('hdr-flagged').textContent = flagged;
+
+  const total = questions.length;
+  const pct = Math.round((answered / total) * 100);
+  document.getElementById('prog-label').textContent = `${answered} / ${total}`;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+}
+
+function setsEqual(a, b) {
+  if (a.size !== b.size) return false;
+  for (const v of a) if (!b.has(v)) return false;
+  return true;
+}
+
+// ── INIT ──
+buildQuiz();
+updateStats();
+</script>
+</body>
+</html>
