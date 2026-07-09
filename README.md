@@ -13,7 +13,8 @@ for the **NVIDIA-Certified Professional (NCP): OpenUSD Development** exam. It's 
 as a quick reference for concepts covered by the certification, and includes conceptual
 explanations, code snippets, cheat sheets, diagrams, and three full sets of practice
 questions (70 questions each) mapped to the official exam domains. In addition to the document,
-provided 3 practice tests to simulate the test experience.
+provided 3 practice tests to simulate the test experience. To run these html files, please download them in 
+your local station.
 
 ## Author
 
