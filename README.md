@@ -10,7 +10,8 @@ This is a supplemental document collecting personal study notes compiled while p
 for the **NVIDIA-Certified Professional (NCP): OpenUSD Development** exam. It's intended
 as a quick reference for concepts covered by the certification, and includes conceptual
 explanations, code snippets, cheat sheets, diagrams, and three full sets of practice
-questions (70 questions each) mapped to the official exam domains.
+questions (70 questions each) mapped to the official exam domains. In addition to the document,
+provided 3 practice tests to simulate the test experience.
 
 ## Author
 
